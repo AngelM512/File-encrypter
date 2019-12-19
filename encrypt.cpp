@@ -9,33 +9,34 @@ using namespace std;
 
 // function prototypes
 void clearScreen();
-char menu(string &fileName);
+char menu(string &fileName, fstream &input);
 void encryptFile(fstream &input, fstream &output, int);
 void decryptFile(fstream &input, fstream &output);
 
 int main(){
-    const int ENCRYPT = 10;
+    // Vars + Objects
+    const int ENCODE = 10;
     char choice;
     string fileName;
     const string fileEncryptedName = "encrypted.txt"; 
     const string fileDescrypt = "descrypted.txt";
-
-    // display menu + return a char
-    choice = menu(fileName);
-
     //create file object 
     fstream fileFilter;
     fstream encryptedFile;
-    //doesFileExist?
-    
+
+    // display menu + return a char
+    choice = menu(fileName, fileFilter);
+
+    //clear
     clearScreen();  
+    
     switch (choice)
     {
     case 'a':
         fileFilter.open(fileName, ios::in);
         encryptedFile.open(fileEncryptedName, ios::out);
         /* call function */
-        encryptFile( fileFilter, encryptedFile, ENCRYPT);
+        encryptFile( fileFilter, encryptedFile, ENCODE);
         break;
     case 'b':
         encryptedFile.open(fileEncryptedName, ios::in);
@@ -91,27 +92,45 @@ void clearScreen()
     cout << string( 100, '\n' );
 }
 
-char menu(string &fileName) 
+char menu(string &fileName, fstream &input) 
 {
+    bool flag = true;
     char choice;
-    cout << "\n\n* Welcome to encrypter by Angel Moreta *" << endl; // welcome user
-    cout << "( A ) to encrypt a .txt file | ( B ) to descrypt a .txt file: ";
-    cin >> choice;
+    cout << "\n\n* Welcome to encrypter by Angel Moreta *\n\n"; // welcome user
+   
+    do {
+        cout << "( A ) to encrypt a .txt file | ( B ) to descrypt a .txt file: ";
+        cin >> choice;
+        if ( tolower( choice ) == 'a' )
+        {
+            cout << "Enter file file: ";
+            cin >> fileName;
+            
+            // check if file exist
+            input.open(fileName);
+            if (!input)
+            {
+                cout << "NON-Existing file; try again" << endl;
+                continue;
+                };
 
-    if ( tolower( choice ) == 'a' )
-    {
-        cout << "Enter file file: ";
-        cin >> fileName;
-    } else if ( tolower( choice ) == 'b' )
-    {
-        return choice;
-    } 
-    else
-    {
-        cout << "\n\n* Functionality not available *\n\n";
-        exit(1);
-    }
+            // break loop
+            flag = false;
+        } else if ( tolower( choice ) == 'b' )
+        {
+            // return choice val + end loop
+            return choice;
+            flag = false;
+        }
+        else
+        {
+            cout << "\n\n* Functionality not available *\n\n";
+           
+        } 
+    } while (flag == true);
     
     return tolower( choice );
 };
+
+
 
